@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="60 seconds" debug="false">
+    <!--生产环境下的属性文件-->
+    <springProfile name="prd">
+        <property resource="logback-prd.properties"/>
+    </springProfile>
+    <!--开发下的属性文件-->
+    <springProfile name="dev">
+        <property resource="logback-dev.properties"/>
+    </springProfile>
+    <!--配置日志-->
+    <appender name="file-userInfo" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!--拦截info等级的日志输出-->
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>userInfo</level>
+        </filter>
+        <Prudent>true</Prudent>
+        <rollingPolicy
+                class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!--文件名-->
+            <FileNamePattern>
+                ${logback.dir}/${logback.userInfo.filename}-%d{yyyy-MM-dd}.log
+            </FileNamePattern>
+            <!--最大保存时间-->
+            <MaxHistory>${logback.maxhistory}</MaxHistory>
+        </rollingPolicy>
+        <encoder>
+            <!-- 定义日志消息的输出格式，包括日期、进程ID、线程名、日志级别、日志器名和日志消息 -->
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [${PID:- }] [%thread] %-5level %logger{36} - %msg%n</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+    <!--包含基础的logback的配置文件-->
+    <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
+<!--        <layout class="ch.qos.logback.classic.PatternLayout">-->
+<!--            <pattern>%d{yyyy-MM-dd HH:mm:ss,GMT+8} [%p][%c][%M][%L]-> %m%n</pattern>-->
+<!--        </layout>-->
+        <encoder>
+            <!-- 定义日志消息的输出格式，包括日期、进程ID、线程名、日志级别、日志器名和日志消息 -->
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [${PID:- }] [%thread] 123 %-5level %logger{36} - %msg%n</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+    <include resource="org/springframework/boot/logging/logback/base.xml"/>
+<!--    将org.springframework.web包下的info等级日志进行输出-->
+<!--    <logger name="org.springframework.web" level="userInfo">-->
+<!--        &lt;!&ndash;加入日志的配置&ndash;&gt;-->
+<!--        <appender-ref ref="file-userInfo" />-->
+<!--    </logger>-->
+<!--    将logback.controller.dir属性包下的info等级日志进行输出-->
+<!--    <logger name="${logback.controller.dir}" level="userInfo">-->
+<!--        &lt;!&ndash;加入日志的配置&ndash;&gt;-->
+<!--        <appender-ref ref="file-userInfo" />-->
+<!--    </logger>-->
+
+   <logger name="org.redisson.connection.DNSMonitor" level="error"/>
+    <logger name="com.zaxxer.hikari" level="userInfo"/>
+    <logger name="io.lettuce.core" level="userInfo"/>
+    <logger name="org.springframework.data.redis" level="userInfo"/>
+    <logger name="org.springframework" level="userInfo"/>
+
+    <root level="Debug">
+        <appender-ref ref="stdout" />
+        <appender-ref ref="file-userInfo" />
+    </root>
+</configuration>
